@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/sanmitM312/room-booking-app/internal/config"
 	"github.com/sanmitM312/room-booking-app/internal/handlers"
+	"github.com/sanmitM312/room-booking-app/internal/helpers"
 	"github.com/sanmitM312/room-booking-app/internal/models"
 	"github.com/sanmitM312/room-booking-app/internal/render"
 )
@@ -18,14 +20,42 @@ const portNumber = ":8080"
 
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 // main is the main function
 func main() {
+
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
+
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error {
 	// things to put inside the session
 	gob.Register(models.Reservation{})
 
 	// change this to true when in production
 	app.InProduction = false
+
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
 
 	// set up the session
 	session = scs.New()
@@ -39,6 +69,7 @@ func main() {
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
+		return err
 	}
 
 	app.TemplateCache = tc
@@ -46,18 +77,7 @@ func main() {
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
-
 	render.NewTemplates(&app)
-
-	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
-
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app),
-	}
-
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	helpers.NewHelpers(&app)
+	return nil
 }
