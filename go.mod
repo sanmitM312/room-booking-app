@@ -16,6 +16,8 @@ require (
 	github.com/gobuffalo/packr/v2 v2.8.3 // indirect
 	github.com/gobuffalo/pop v4.13.1+incompatible // indirect
 	github.com/gobuffalo/validate v2.0.4+incompatible // indirect
+	github.com/jackc/pgconn v1.13.0
+	github.com/jackc/pgx/v4 v4.17.0
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/justinas/nosurf v1.1.1
 	github.com/lib/pq v1.10.6 // indirect
