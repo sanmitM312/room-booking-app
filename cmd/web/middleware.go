@@ -5,13 +5,14 @@ import (
 	"net/http"
 
 	"github.com/justinas/nosurf"
+	"github.com/sanmitM312/room-booking-app/internal/helpers"
 )
 
 func WritetToConsole(next http.Handler) http.Handler {
 	// return an anonymous function
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Hit the page.")
-		next.ServeHTTP(w,r)
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -21,8 +22,8 @@ func NoSurf(next http.Handler) http.Handler {
 
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
-		Path: "/",
-		Secure: false,
+		Path:     "/",
+		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -36,4 +37,14 @@ func SessionLoad(next http.Handler) http.Handler {
 	// 	fmt.Println(session)
 	// }
 	return session.LoadAndSave(next)
+}
+
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !helpers.IsAuthenticated(r) {
+			session.Put(r.Context(), "error", "Log in first!")
+			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		}
+		next.ServeHTTP(w,r)
+	})
 }
