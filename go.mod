@@ -8,6 +8,7 @@ require (
 	github.com/cockroachdb/cockroach-go v2.0.1+incompatible // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-chi/chi v1.5.4
+	github.com/go-test/deep v1.0.8 // indirect
 	github.com/gobuffalo/attrs v1.0.2 // indirect
 	github.com/gobuffalo/envy v1.10.1 // indirect
 	github.com/gobuffalo/fizz v1.14.2 // indirect
