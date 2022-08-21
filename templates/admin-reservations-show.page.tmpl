@@ -18,7 +18,9 @@
                     <input type="hidden" name="start_date" value="{{index .StringMap "start_date"}}">
                     <input type="hidden" name="end_date" value="{{index .StringMap "end_date"}}">
                     <input type="hidden" name="room_id" value="{{$res.RoomID}}">
-
+                    <input type="hidden" name="year" value="{{index .StringMap "year"}}">
+                    <input type="hidden" name="month" value="{{index .StringMap "month"}}">
+                    
                     <div class="form-group mt-3">
                         <label for="first_name">First Name:</label>
                         {{with .Form.Errors.Get "first_name"}}
@@ -64,14 +66,22 @@
                     </div>
 
                     <hr>
-                    <div class="float-right">
+                    <div class="float-end">
                         <a href="#!" class="btn btn-danger" onclick="deleteRes({{$res.ID}})">Delete Reservation </a>
                     </div>
-                    <div class="float-left">
+                    <div class="float-start">
                         <input type="submit" class="btn btn-primary" value="Save">
-                        <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
-                        <a href="#!" class="btn btn-info" onclick="processRes({{$res.ID}})">Mark as Processed </a>
+                        {{if eq $src "cal"}}
+                            <a href="#!" onclick="window.history.go(-1)" class="btn btn-warning">Cancel</a>
+                        {{else}}
+                            <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
+ 
+                        {{end}}
+                        {{if eq $res.Processed 0}}
+                            <a href="#!" class="btn btn-info" onclick="processRes({{$res.ID}})">Mark as Processed </a>
+                        {{end}}
                     </div>
+                    <div class="clearfix"></div>
                 </form>
     </div>
 {{end}}
@@ -85,7 +95,10 @@
                 msg: 'Are you sure?',
                 callback: function(result){
                     if(result !== false){
-                        window.location.href = "/admin/process-reservation/{{$src}}/" + id;
+                        window.location.href = "/admin/process-reservation/{{$src}}/" 
+                        + id
+                        + "/do?y={{index .StringMap "year"}}&m={{index .StringMap "month"}}"
+
                     }
                 }
             })
@@ -96,7 +109,9 @@
                 msg: 'Are you sure?',
                 callback: function(result){
                     if(result !== false){
-                        window.location.href = "/admin/delete-reservation/{{$src}}/" + id;
+                        window.location.href = "/admin/delete-reservation/{{$src}}/"
+                            + id
+                            + "/do?y={{index .StringMap "year"}}&m={{index .StringMap "month"}}"
                     }
                 }
             })
