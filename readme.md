@@ -8,3 +8,5 @@ This is the repository for the bookings and reservations project
 - Uses [nosurf](github.com/justinas/nosurf)
 - Uses Soda for database migrations
 - Uses postgresql for the database
+
+<img src="/static/github-ss/landing_page.png" alt="login" style="height: 300px; width:800px;"/>
